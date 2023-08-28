@@ -115,4 +115,12 @@ public class Account {
                 ", password='" + password + '\'' +
                 '}';
     }
+
+    public boolean isValid() {
+        return  (!username.isEmpty() && 
+                !password.isEmpty() &&
+                (username.length() < 256) &&
+                (password.length() > 3) &&
+                (password.length() < 256));
+    }
 }

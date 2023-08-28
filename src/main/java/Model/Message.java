@@ -139,4 +139,9 @@ public class Message {
                 ", time_posted_epoch=" + time_posted_epoch +
                 '}';
     }
+
+    public boolean isValid(){
+      return (!message_text.isEmpty() &&
+             (message_text.length() < 256));  
+    }
 }
