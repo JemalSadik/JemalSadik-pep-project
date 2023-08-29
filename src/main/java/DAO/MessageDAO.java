@@ -95,7 +95,7 @@ public class MessageDAO{
                 String message_text = rs.getString("message_text");
                 int returned_posted_by = rs.getInt("posted_by");
                 long time_posted_epoch = rs.getLong("time_posted_epoch");
-                            
+                
                 messages.add(new Message(retrunedId, returned_posted_by, message_text, time_posted_epoch));
             }
 
@@ -112,7 +112,7 @@ public class MessageDAO{
         Connection connection = ConnectionUtil.getConnection(); 
         try {
             //2. prepare statement
-            String sql = "SELECT * FROM Message WHERE messageid = ? ";
+            String sql = "SELECT * FROM Message WHERE message_id = ? ";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1,messageid);
 

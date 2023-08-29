@@ -140,8 +140,4 @@ public class Message {
                 '}';
     }
 
-    public boolean isValid(){
-      return (!message_text.isEmpty() &&
-             (message_text.length() < 256));  
-    }
 }

@@ -26,7 +26,7 @@ public class MessageService {
     
     //Read all messages for a User
     public List<Message> getAllMessagesForUser(int posted_by) {
-      return messageDAO.RetrieveAllMessagesForUser(posted_by);
+       return messageDAO.RetrieveAllMessagesForUser(posted_by);
     }
 
     //Read a single messages by message id 
@@ -36,7 +36,12 @@ public class MessageService {
 
     // Create a new message
     public Message CreateMessage(Message message) {
-       return messageDAO.CreateMessage(message);  
+      String message_text = message.getMessage_text();
+      if (!message_text.isEmpty() &&
+         (message_text.length() < 256))
+         return messageDAO.CreateMessage(message); 
+      else
+         return null;  
     }    
 
     // Update Message text

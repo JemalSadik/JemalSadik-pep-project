@@ -36,7 +36,7 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         
         // Get messages/message
-        app.post("/messages", this::CreateMessageHandler);
+        app.post("/messages", this::CreateMessageHandler); 
         app.delete("/messages/{message_id}", this::deleteMessageByMessageIdHandler);
         app.get("/accounts/{account_id}/messages", this::getAllMessagesForUserHandler);
         app.get("/messages", this::getAllMessageshandler);
@@ -129,10 +129,11 @@ public class SocialMediaController {
     private void CreateMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         // get the message object from the body of ctx object
-        //Message message = ctx.bodyAsClass(Message.class);
         Message message = mapper.readValue(ctx.body(), Message.class);
-        
-        if (!message.isValid()) // message is not valid
+
+        String message_text = message.getMessage_text();
+        if (message_text.isEmpty() ||
+          (message_text.length() > 254)) // message is not valid
            ctx.status(400);  
         else
         {
@@ -150,8 +151,7 @@ public class SocialMediaController {
                  ctx.status(400);
               else 
               {
-                 //ctx.json(createdMessageme); // send JSON representation of an object in response body
-                 ctx.json(mapper.writeValueAsString(createdMessageme));
+                 ctx.json(createdMessageme); // send JSON representation of an object in response body
                  ctx.status(200);  // if successful set status to 200
               }
            }
@@ -162,40 +162,40 @@ public class SocialMediaController {
     private void updateMessageTextHandler(Context ctx) throws JsonProcessingException {
         // get message object from ctx object (param)
         Message message = ctx.bodyAsClass(Message.class);
-        
-        if (!message.isValid()) 
+        int message_id = message.getMessage_id(); // Integer.parseInt(ctx.pathParam("message_id"));
+        Message retrievedMessaged = messageService.getMessageByMessageId(message_id); 
+     
+        if (retrievedMessaged == null ) // if the message doesn't exist, set status = 400
            ctx.status(400);
         else
         { 
-           int message_id =  message.getMessage_id();   
-            Message retrievedMessaged = messageService.getMessageByMessageId(message_id); 
-            if (retrievedMessaged == null) // message does not exists
+            // call  messageService.updateMessageText method
+            boolean result = messageService.updateMessageText(message);
+            
+            if (result == false) // If update is Not successful, set status = 400 
                ctx.status(400);
-            else 
-            {
-                // call  messageService.updateMessageText method
-                boolean result = messageService.updateMessageText(message);
-                // If update is Not successful, set status = 400 
-                if (result == false)
-                   ctx.status(400);
-                else
-                { 
-                    ctx.status(200);
-                    ctx.json(message); // send JSON representation of an object in response body
-                }
-            }   
+            else
+            { 
+               ctx.status(200);
+               ctx.json(message); // send JSON representation of an object in response body
+            }
         }  
     }
 
     private void deleteMessageByMessageIdHandler(Context ctx) throws JsonProcessingException {
         // get any relevant info from ctx object (param)
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
-        // call relevant service method so it can make decisions and return info needed
-        boolean result = messageService.deleteMessageByMessageId(message_id);
+        Message retrievedMessaged = messageService.getMessageByMessageId(message_id); 
         ctx.status(200);
-         // if delete was successful, send response
-        if (result) 
-          ctx.result("now-deleted");
+        if (retrievedMessaged !=null)
+        {
+           // call relevant service method so it can make decisions and return info needed
+           boolean result = messageService.deleteMessageByMessageId(message_id);
+           if (result) // if delete was successful, send response
+           {
+             ctx.json(retrievedMessaged); // send JSON representation of an object in response body
+           }
+        }
     }
 
     

@@ -24,7 +24,14 @@ public class AccountService {
     }    
     // Create/Regiter User 
     public Account registerUser(Account account) {
-      if (account.isValid()) 
+      String username =  account.getUsername(); 
+      String password = account.getPassword();
+      if (!username.isEmpty() && 
+         !password.isEmpty() &&
+         (username.length() < 254) &&
+         (password.length() > 3) &&
+         (password.length() < 254))
+
          if (accountDAO.getUserByUserName(account.getUsername()) == null)
            return accountDAO.registerUser(account);
       
