@@ -43,7 +43,7 @@ public class SocialMediaController {
         app.get("/messages/{message_id}", this::getMessageByMessageIdHandler);
         app.patch("/messages/{message_id}", this::updateMessageTextHandler);
       
-        app.get("/login", this::loginUserHandler);
+        app.post("/login", this::loginUserHandler);
         app.post("/register", this::registerUserHandler);
       
        
@@ -75,7 +75,7 @@ public class SocialMediaController {
     
         // get account object from the body of ctx object (param)
         Account account = ctx.bodyAsClass(Account.class);
-   
+      
         // Find the user account using the service method
         Account retrievedAccount = accountService.loginUser(account);
         
