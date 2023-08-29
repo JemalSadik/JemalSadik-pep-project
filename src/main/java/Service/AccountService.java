@@ -25,7 +25,7 @@ public class AccountService {
     // Create/Regiter User 
     public Account registerUser(Account account) {
       if (account.isValid()) 
-         if (!accountDAO.getAllUsers().contains(account))
+         if (accountDAO.getUserByUserName(account.getUsername()) == null)
            return accountDAO.registerUser(account);
       
        return null;   

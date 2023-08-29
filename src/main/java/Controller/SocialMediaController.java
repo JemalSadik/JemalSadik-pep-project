@@ -5,6 +5,9 @@ import Service.AccountService;
 import Service.MessageService;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -31,24 +34,26 @@ public class SocialMediaController {
     
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("/login", this::loginUserHandler);
-        app.post("/register", this::registerUserHandler);
         
         // Get messages/message
-        app.get("/messages", this::getAllMessageshandler);
-        app.get("accounts/{account_id}/messages", this::getAllMessagesForUserHandler);
-        app.get("/messages/{message_id}", this::getMessageByMessageIdHandler);
         app.post("/messages", this::CreateMessageHandler);
-        app.patch("/messages/{message_id}", this::updateMessageTextHandler);
         app.delete("/messages/{message_id}", this::deleteMessageByMessageIdHandler);
-
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesForUserHandler);
+        app.get("/messages", this::getAllMessageshandler);
+        app.get("/messages/{message_id}", this::getMessageByMessageIdHandler);
+        app.patch("/messages/{message_id}", this::updateMessageTextHandler);
+      
+        app.get("/login", this::loginUserHandler);
+        app.post("/register", this::registerUserHandler);
+      
+       
         return app;
     }
 
    // Handlers
 
    //1. Account - Register User (Create Account)
-    private void registerUserHandler(Context ctx) {
+    private void registerUserHandler(Context ctx) throws JsonProcessingException {
         // get the Account object from the body of ctx object
         Account account = ctx.bodyAsClass(Account.class);
 
@@ -66,7 +71,7 @@ public class SocialMediaController {
     }
 
     //2. Account - login User Handler
-    private void loginUserHandler(Context ctx) {
+    private void loginUserHandler (Context ctx) throws JsonProcessingException {
     
         // get account object from the body of ctx object (param)
         Account account = ctx.bodyAsClass(Account.class);
@@ -85,7 +90,7 @@ public class SocialMediaController {
     }
     
     //3. Message - get all Messages Handler
-    private void getAllMessageshandler(Context ctx) {
+    private void getAllMessageshandler(Context ctx) throws JsonProcessingException {
         // call service method to return all messages 
         List<Message> messages = messageService.getAllMessages();
         ctx.status(200); // always set status 200, default
@@ -93,7 +98,7 @@ public class SocialMediaController {
         ctx.json(messages);
     }
     //4. Messages - Get all Messages For a User Handler
-    private void getAllMessagesForUserHandler(Context ctx) {
+    private void getAllMessagesForUserHandler(Context ctx) throws JsonProcessingException {
         // get parameter posted_by from ctx object (param)
         int posted_by = Integer.parseInt(ctx.pathParam("posted_by"));
 
@@ -106,7 +111,7 @@ public class SocialMediaController {
     }
 
     //5. Message - get a message For message id Handler
-    private void getMessageByMessageIdHandler(Context ctx) {
+    private void getMessageByMessageIdHandler(Context ctx) throws JsonProcessingException {
         // get parameter message_id from ctx object (param)
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
 
@@ -121,9 +126,11 @@ public class SocialMediaController {
     }
 
     //6. Message - Create a Message
-    private void CreateMessageHandler(Context ctx) {
+    private void CreateMessageHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
         // get the message object from the body of ctx object
-        Message message = ctx.bodyAsClass(Message.class);
+        //Message message = ctx.bodyAsClass(Message.class);
+        Message message = mapper.readValue(ctx.body(), Message.class);
         
         if (!message.isValid()) // message is not valid
            ctx.status(400);  
@@ -143,7 +150,8 @@ public class SocialMediaController {
                  ctx.status(400);
               else 
               {
-                 ctx.json(createdMessageme); // send JSON representation of an object in response body
+                 //ctx.json(createdMessageme); // send JSON representation of an object in response body
+                 ctx.json(mapper.writeValueAsString(createdMessageme));
                  ctx.status(200);  // if successful set status to 200
               }
            }
@@ -151,7 +159,7 @@ public class SocialMediaController {
     }
 
     // 7. Message - Update Message Text Handler
-    private void updateMessageTextHandler(Context ctx) {
+    private void updateMessageTextHandler(Context ctx) throws JsonProcessingException {
         // get message object from ctx object (param)
         Message message = ctx.bodyAsClass(Message.class);
         
@@ -179,7 +187,7 @@ public class SocialMediaController {
         }  
     }
 
-    private void deleteMessageByMessageIdHandler(Context ctx) {
+    private void deleteMessageByMessageIdHandler(Context ctx) throws JsonProcessingException {
         // get any relevant info from ctx object (param)
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
         // call relevant service method so it can make decisions and return info needed

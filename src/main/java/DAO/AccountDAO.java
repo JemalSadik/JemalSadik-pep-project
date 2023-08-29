@@ -128,4 +128,33 @@ public class AccountDAO{
         return null;
     }
    
+    // READ = get User by UserName
+    public Account getUserByUserName(String username) {
+        // 1. Create/Get connection to database
+        Connection connection = ConnectionUtil.getConnection();     
+        try {
+             //2. prepare statement
+             String sql = "SELECT * FROM Account WHERE username = ? ";
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             preparedStatement.setString(1, username);
+          
+            // 3. execute statement
+            ResultSet rs = preparedStatement.executeQuery();
+
+            // 4. process results
+            while (rs.next()) {
+                // get the values of each column from the result set
+                int retrund_account_id = rs.getInt("account_id");
+                String l_username = rs.getString("username");
+                String password = rs.getString("password");
+           
+                return new Account(retrund_account_id, l_username, password);
+            }
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
 }
