@@ -100,7 +100,7 @@ public class SocialMediaController {
     //4. Messages - Get all Messages For a User Handler
     private void getAllMessagesForUserHandler(Context ctx) throws JsonProcessingException {
         // get parameter posted_by from ctx object (param)
-        int posted_by = Integer.parseInt(ctx.pathParam("posted_by"));
+        int posted_by = Integer.parseInt(ctx.pathParam("account_id"));
 
         // get all Messges for User using the service method
         List<Message> messages = messageService.getAllMessagesForUser(posted_by);
