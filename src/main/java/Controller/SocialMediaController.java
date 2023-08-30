@@ -109,7 +109,6 @@ public class SocialMediaController {
         // Response body - send all messages to as JSON objects
         ctx.json(messages);
     }
-
     //5. Message - get a message For message id Handler
     private void getMessageByMessageIdHandler(Context ctx) throws JsonProcessingException {
         // get parameter message_id from ctx object (param)
@@ -162,22 +161,35 @@ public class SocialMediaController {
     private void updateMessageTextHandler(Context ctx) throws JsonProcessingException {
         // get message object from ctx object (param)
         Message message = ctx.bodyAsClass(Message.class);
-        int message_id = message.getMessage_id(); // Integer.parseInt(ctx.pathParam("message_id"));
+        int message_id = Integer.parseInt(ctx.pathParam("message_id"));
+        
+        //Retrieve message for message_id
         Message retrievedMessaged = messageService.getMessageByMessageId(message_id); 
      
-        if (retrievedMessaged == null ) // if the message doesn't exist, set status = 400
+        if (retrievedMessaged == null ) // if the message Not found, set status = 400
            ctx.status(400);
         else
         { 
-            // call  messageService.updateMessageText method
-            boolean result = messageService.updateMessageText(message);
-            
-            if (result == false) // If update is Not successful, set status = 400 
+            if ((message.getMessage_text().length() < 1) ||  
+                (message.getMessage_text().length() > 254) 
+               ) 
+            {
                ctx.status(400);
+            }
             else
-            { 
-               ctx.status(200);
-               ctx.json(message); // send JSON representation of an object in response body
+            {
+               // Message found and valid
+               // call  messageService.updateMessageText method
+               int message_length = message.getMessage_text().length();
+               boolean result = messageService.updateMessageText(message);
+            
+              if (result == false) // if update is not successful, set status to 600  
+                ctx.status(message_length); // this is a valid message and supposed to be updated successfully.
+              else
+              { 
+                 ctx.status(200);
+                 ctx.json(message); // send JSON representation of an object in response body
+              }
             }
         }  
     }
