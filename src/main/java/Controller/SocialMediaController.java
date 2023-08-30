@@ -166,25 +166,26 @@ public class SocialMediaController {
         //Retrieve message for message_id
         Message retrievedMessaged = messageService.getMessageByMessageId(message_id); 
      
-        if (retrievedMessaged == null ) // if the message Not found, set status = 400
+        if (retrievedMessaged == null ) // if message not found, set status = 400
            ctx.status(400);
         else
         { 
             if ((message.getMessage_text().length() < 1) ||  
                 (message.getMessage_text().length() > 254) 
-               ) 
+               ) // if message length is not valid, set status = 400
             {
                ctx.status(400);
             }
             else
             {
-               // Message found and valid
                // call  messageService.updateMessageText method
-               int message_length = message.getMessage_text().length();
                message.setMessage_id(message_id);
+               message.setTime_posted_epoch(retrievedMessaged.getTime_posted_epoch());
+               message.setPosted_by(retrievedMessaged.getPosted_by());
+  
                boolean result = messageService.updateMessageText(message);
             
-              if (result == false) // if update is not successful, set status to 600  
+              if (result == false) // if update is not successful, set status to 400  
                 ctx.status(400); // this is a valid message and supposed to be updated successfully.
               else
               { 
