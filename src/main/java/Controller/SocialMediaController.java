@@ -128,31 +128,24 @@ public class SocialMediaController {
         // get the message object from the body of ctx object
         Message message = ctx.bodyAsClass(Message.class);
   
-        String message_text = message.getMessage_text();
-        if (message_text.isEmpty() ||
-          (message_text.length() > 254)) // message is not valid
-           ctx.status(400);  
-        else
+        int posted_by = message.getPosted_by();
+        Account retrievedAccount = accountService.getUserById(posted_by);   
+        if (retrievedAccount == null) // posted_by User is not found
+           ctx.status(400);
+        else  
         {
-           int posted_by = message.getPosted_by();
-           Account retrievedAccount = accountService.getUserById(posted_by);   
-           if (retrievedAccount == null) // posted_by User is not found
-              ctx.status(400);
-           else  
-           {
-              // Call CreateMessage service method so it can make decisions and return info needed
-              Message createdMessageme = messageService.CreateMessage(message);
+           // Call CreateMessage service method so it can make decisions and return info needed
+           Message createdMessageme = messageService.CreateMessage(message);
 
-              // Response Body
-              if (createdMessageme == null) // couldn't create message
-                 ctx.status(400);
-              else 
-              {
-                 ctx.json(createdMessageme); // send JSON representation of an object in response body
-                 ctx.status(200);  // if successful set status to 200
-              }
+           // Response Body
+           if (createdMessageme == null) // couldn't create message
+              ctx.status(400);
+           else 
+           {
+              ctx.json(createdMessageme); // send JSON representation of an object in response body
+              ctx.status(200);  // if successful set status to 200
            }
-       }
+        }
     }
 
     // 7. Message - Update Message Text Handler

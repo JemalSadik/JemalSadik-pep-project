@@ -38,7 +38,7 @@ public class MessageService {
     public Message CreateMessage(Message message) {
       String message_text = message.getMessage_text();
       if (!message_text.isEmpty() &&
-         (message_text.length() < 256))
+         (message_text.length() < 255))
          return messageDAO.CreateMessage(message); 
       else
          return null;  
