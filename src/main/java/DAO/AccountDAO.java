@@ -68,36 +68,6 @@ public class AccountDAO{
         return null;
     }
 
-    // READ All Users
-    public List<Account> getAllUsers() {
-        // 1. Create/Get connection to the database
-        Connection connection = ConnectionUtil.getConnection();
-        // create variables needed
-        List<Account> accounts = new ArrayList<>();
-        try {
-            //2. Prepare statement 
-            String sql = "SELECT * FROM Account";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            
-            //3. execute query
-            ResultSet rs = preparedStatement.executeQuery();
-          
-            //4. process results
-            while (rs.next()) {
-                int retrunedId = rs.getInt("account_id");
-                String username = rs.getString("username");
-                String password = rs.getString("password");
-                            
-                accounts.add(new Account(retrunedId, username, password));
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
-        return accounts;
-    }
-
     // READ = get User by Id
     public Account getUserById(int account_id) {
         // 1. Create/Get connection to database

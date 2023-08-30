@@ -18,10 +18,7 @@ public class AccountService {
     public AccountService(AccountDAO accountDAO){
         this.accountDAO = accountDAO;
     }
-
-    public List<Account> getAllUsers() {
-        return accountDAO.getAllUsers(); 
-    }    
+       
     // Create/Regiter User 
     public Account registerUser(Account account) {
       String username =  account.getUsername(); 
