@@ -126,10 +126,9 @@ public class SocialMediaController {
 
     //6. Message - Create a Message
     private void CreateMessageHandler(Context ctx) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
         // get the message object from the body of ctx object
-        Message message = mapper.readValue(ctx.body(), Message.class);
-
+        Message message = ctx.bodyAsClass(Message.class);
+  
         String message_text = message.getMessage_text();
         if (message_text.isEmpty() ||
           (message_text.length() > 254)) // message is not valid
@@ -203,7 +202,4 @@ public class SocialMediaController {
            }
         }
     }
-
-    
-
 }
