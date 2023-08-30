@@ -148,7 +148,7 @@ public class MessageDAO{
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, message.getMessage_text());
             ps.setInt(2, message.getMessage_id());
-
+            System.out.println(message.getMessage_id());
             int numberOfUpdatedRows = ps.executeUpdate();
 
             if (numberOfUpdatedRows != 0) {

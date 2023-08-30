@@ -162,7 +162,7 @@ public class SocialMediaController {
         // get message object from ctx object (param)
         Message message = ctx.bodyAsClass(Message.class);
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
-        
+
         //Retrieve message for message_id
         Message retrievedMessaged = messageService.getMessageByMessageId(message_id); 
      
@@ -181,10 +181,11 @@ public class SocialMediaController {
                // Message found and valid
                // call  messageService.updateMessageText method
                int message_length = message.getMessage_text().length();
+               message.setMessage_id(message_id);
                boolean result = messageService.updateMessageText(message);
             
               if (result == false) // if update is not successful, set status to 600  
-                ctx.status(message_length); // this is a valid message and supposed to be updated successfully.
+                ctx.status(400); // this is a valid message and supposed to be updated successfully.
               else
               { 
                  ctx.status(200);
