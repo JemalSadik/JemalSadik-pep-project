@@ -170,28 +170,20 @@ public class SocialMediaController {
            ctx.status(400);
         else
         { 
-            if ((message.getMessage_text().length() < 1) ||  
-                (message.getMessage_text().length() > 254) 
-               ) // if message length is not valid, set status = 400
-            {
-               ctx.status(400);
-            }
-            else
-            {
-               // call  messageService.updateMessageText method
-               message.setMessage_id(message_id);
-               message.setTime_posted_epoch(retrievedMessaged.getTime_posted_epoch());
-               message.setPosted_by(retrievedMessaged.getPosted_by());
-  
-               boolean result = messageService.updateMessageText(message);
+            // call  messageService.updateMessageText method
+            message.setMessage_id(message_id);
+            message.setTime_posted_epoch(retrievedMessaged.getTime_posted_epoch());
+            message.setPosted_by(retrievedMessaged.getPosted_by());
             
-              if (result == false) // if update is not successful, set status to 400  
-                ctx.status(400); // this is a valid message and supposed to be updated successfully.
-              else
-              { 
-                 ctx.status(200);
-                 ctx.json(message); // send JSON representation of an object in response body
-              }
+            // if the message_text length is a valid, update must retrun true (successful).
+            boolean result = messageService.updateMessageText(message);
+            
+            if (result == false) // if update is not successful, set status to 400  
+               ctx.status(400); 
+            else
+            { 
+               ctx.status(200);
+               ctx.json(message); // send JSON representation of an object in response body
             }
         }  
     }

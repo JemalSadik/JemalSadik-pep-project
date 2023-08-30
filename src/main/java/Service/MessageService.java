@@ -46,11 +46,11 @@ public class MessageService {
 
     // Update Message text
     public boolean updateMessageText(Message message) {
-      /*if ((message.getMessage_text().length() < 1) ||
+      if ((message.getMessage_text().length() < 1) ||
          (message.getMessage_text().length() > 254)) 
         return false; 
-      else */ 
-      return messageDAO.updateMessageText(message);
+      else  
+        return messageDAO.updateMessageText(message);
     }
         
     // Delete a Message by Message ID
