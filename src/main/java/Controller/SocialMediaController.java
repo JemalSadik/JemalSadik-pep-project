@@ -6,7 +6,6 @@ import Service.MessageService;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
